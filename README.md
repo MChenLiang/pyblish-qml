@@ -22,7 +22,7 @@ Pyblish QML works with..
 - Houdini 11+
 - Blender 2.79-2.80+
 
-..and requires an external Python (2 or 3) install with PyQt 5.6+ available.
+..and requires an external Python installation with a compatible Qt binding. This branch's runtime UI imports QtQuick.Controls 2.3 (Qt 5.10+); Qt 6 bindings require Python 3 and the QtStateMachine, QtQml, QtQuick, and QtQuick.Controls modules. Qt 6 runtime behavior has not yet been verified.
 
 - Pyblish 1.2.1 or higher
 - [Python 3.5 any platform](../../wiki/Python-3.5-Any-Platform)
@@ -85,6 +85,18 @@ api.register_pyqt5("C:/modules/python-qt5")
 
 show()
 ```
+
+For a Qt 6 binding such as PySide6, use a Python 3 interpreter. If the binding is not already importable by that interpreter, register the parent directory of its `PySide6` package:
+
+```python
+from pyblish_qml import api, show
+
+api.register_python_executable("C:/path/to/python.exe")
+api.register_qt("C:/path/to/site-packages", binding="PySide6")
+show()
+```
+
+`register_pyqt5()` remains available for existing PyQt5 integrations. The Qt 6 GUI path has not yet been runtime-tested against this upstream branch.
 
 Alternatively, you may use environment variables instead.
 
@@ -380,7 +392,7 @@ Pyblish QML fills the same gap as Pyblish Lite, with a few notable differences.
 
 **Cons**
 
-- Requires PyQt5 (and either Python 2 or 3)
+- Requires an external Python and a compatible Qt binding (Qt 6 requires Python 3)
 
 Development wise, Pyblish QML is written in.. you guessed it, QML. Whereas Pyblish Lite is written using classic widgets. QML is a new graphical user interface language for OpenGL developed by the same group, Qt.
 
@@ -416,3 +428,7 @@ If you don't have Docker available you can test with these commands, for both Py
 $ cd pyblish-qml
 $ python -m nose --verbose --with-doctest --exe --exclude=vendor
 ```
+
+### AI-assisted contribution disclosure
+
+The compatibility changes in [PR #388](https://github.com/pyblish/pyblish-qml/pull/388) were developed with AI assistance. AI helped compare a local project copy with the newer upstream code, prepare the Qt binding and QML migration, inspect the patch scope and draft the PR description. The contributor reviewed the changed files and preserved the upstream instance-comment flow and vendored Qt.py license notices. No GUI, host, or Qt 6 runtime tests were run on the updated upstream branch. Some QML test files under `qml/tests/` still use QtQuick.Controls 1.3 and were not migrated in this PR.
